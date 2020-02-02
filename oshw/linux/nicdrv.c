@@ -352,8 +352,11 @@ int ecx_outframe_red(ecx_portt *port, int idx)
  */
 static int ecx_recvpkt(ecx_portt *port, int stacknumber)
 {
-   int lp, bytesrx;
+   int lp, bytesrx = 0;
    ec_stackT *stack;
+   struct timeval tv;
+   fd_set readfds;
+   int rv = 0;
 
    if (!stacknumber)
    {

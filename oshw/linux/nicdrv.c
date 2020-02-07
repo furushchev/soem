@@ -374,7 +374,7 @@ static int ecx_recvpkt(ecx_portt *port, int stacknumber)
    rv = select(*stack->sock+1, &readfds, NULL, NULL, &tv);
    if( rv < 0 )
    {
-      printf ("NG!!!\n");
+     /* NG */
    }
    else if ( rv == 0 )
    {

@@ -145,10 +145,12 @@ int ecx_setupnic(ecx_portt *port, const char *ifname, int secondary)
    /* we use RAW packet socket, with packet type ETH_P_ECAT */
    *psock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ECAT));
 
-   timeout.tv_sec =  0;
-   timeout.tv_usec = 1;
-   r = setsockopt(*psock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-   r = setsockopt(*psock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+   /* timeout.tv_sec =  0; */
+   /* timeout.tv_usec = 1; */
+   /* r = setsockopt(*psock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)); */
+   /* r = setsockopt(*psock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout)); */
+   int flags = 0;
+   fcntl(*psock, F_SETFL, flags | O_NONBLOCK);
    i = 1;
    r = setsockopt(*psock, SOL_SOCKET, SO_DONTROUTE, &i, sizeof(i));
    /* connect socket to NIC by name */
@@ -336,8 +338,11 @@ int ecx_outframe_red(ecx_portt *port, int idx)
  */
 static int ecx_recvpkt(ecx_portt *port, int stacknumber)
 {
-   int lp, bytesrx;
+   int lp, bytesrx = 0;
    ec_stackT *stack;
+   struct timeval tv;
+   fd_set readfds;
+   int rv = 0;
 
    if (!stacknumber)
    {
@@ -348,7 +353,23 @@ static int ecx_recvpkt(ecx_portt *port, int stacknumber)
       stack = &(port->redport->stack);
    }
    lp = sizeof(port->tempinbuf);
-   bytesrx = recv(*stack->sock, (*stack->tempbuf), lp, 0);
+   FD_ZERO(&readfds);
+   FD_SET(*stack->sock, &readfds);
+   tv.tv_sec = 0;
+   tv.tv_usec = 1;
+   rv = select(*stack->sock+1, &readfds, NULL, NULL, &tv);
+   if( rv < 0 )
+   {
+     /* NG */
+   }
+   else if ( rv == 0 )
+   {
+      /* Polling... */
+   }
+   else
+   {
+      bytesrx = recv(*stack->sock, (*stack->tempbuf), lp, MSG_DONTWAIT);
+   }
    port->tempinbufs = bytesrx;
 
    return (bytesrx > 0);

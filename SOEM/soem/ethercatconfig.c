@@ -148,7 +148,7 @@ int ecx_detect_slaves(ecx_contextt *context)
    return wkc;
 }
 
-static void ecx_set_slaves_to_default(ecx_contextt *context)
+void ecx_set_slaves_to_default(ecx_contextt *context)
 {
    uint8 b;
    uint16 w;
@@ -638,7 +638,7 @@ static int ecx_lookup_mapping(ecx_contextt *context, uint16 slave, int *Osize, i
    return 0;
 }
 
-static int ecx_map_coe_soe(ecx_contextt *context, uint16 slave, int thread_n)
+int ecx_map_coe_soe(ecx_contextt *context, uint16 slave, int thread_n)
 {
    int Isize, Osize;
    int rval;
@@ -692,7 +692,7 @@ static int ecx_map_coe_soe(ecx_contextt *context, uint16 slave, int thread_n)
    return 1;
 }
 
-static int ecx_map_sii(ecx_contextt *context, uint16 slave)
+int ecx_map_sii(ecx_contextt *context, uint16 slave)
 {
    int Isize, Osize;
    int nSM;
@@ -733,13 +733,13 @@ static int ecx_map_sii(ecx_contextt *context, uint16 slave)
    }
    context->slavelist[slave].Obits = Osize;
    context->slavelist[slave].Ibits = Isize;
-   EC_PRINT("     ISIZE:%d %d OSIZE:%d\n",
-      context->slavelist[slave].Ibits, Isize,context->slavelist[slave].Obits);
+   EC_PRINT("     ISIZE:%d OSIZE:%d\n",
+      context->slavelist[slave].Ibits,context->slavelist[slave].Obits);
 
    return 1;
 }
 
-static int ecx_map_sm(ecx_contextt *context, uint16 slave)
+int ecx_map_sm(ecx_contextt *context, uint16 slave)
 {
    uint16 configadr;
    int nSM;
@@ -893,7 +893,7 @@ static void ecx_config_find_mappings(ecx_contextt *context, uint8 group)
    }
 }
 
-static void ecx_config_create_input_mappings(ecx_contextt *context, void *pIOmap, 
+void ecx_config_create_input_mappings(ecx_contextt *context, void *pIOmap, 
    uint8 group, int16 slave, uint32 * LogAddr, uint8 * BitPos)
 {
    int BitCount = 0;
@@ -1031,7 +1031,7 @@ static void ecx_config_create_input_mappings(ecx_contextt *context, void *pIOmap
    context->slavelist[slave].FMMUunused = FMMUc;
 }
 
-static void ecx_config_create_output_mappings(ecx_contextt *context, void *pIOmap, 
+void ecx_config_create_output_mappings(ecx_contextt *context, void *pIOmap, 
    uint8 group, int16 slave, uint32 * LogAddr, uint8 * BitPos)
 {
    int BitCount = 0;

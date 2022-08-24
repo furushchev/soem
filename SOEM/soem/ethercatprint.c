@@ -17,7 +17,7 @@
 #include "ethercattype.h"
 #include "ethercatmain.h"
 
-#define EC_MAXERRORNAME 127
+#define EC_MAXERRORNAME 255
 
 /** SDO error list type definition */
 typedef struct
